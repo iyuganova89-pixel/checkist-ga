@@ -1,0 +1,850 @@
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Чек-лист договоров | Пошаговый аудит</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f4f7fc 0%, #eef2f5 100%);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      color: #0a2540;
+      padding: 32px 20px 60px;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
+
+    .app-wrapper {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes checkboxPop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: scale(0.8); }
+      60% { opacity: 1; transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .hero, .card-modern {
+      animation: fadeSlideUp 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+    }
+
+    .hero { animation-delay: 0s; }
+    .card-modern:nth-of-type(1) { animation-delay: 0.05s; }
+    .card-modern:nth-of-type(2) { animation-delay: 0.1s; }
+    .card-modern:nth-of-type(3) { animation-delay: 0.15s; }
+
+    .hero {
+      margin-bottom: 32px;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(8px);
+      border-radius: 2rem;
+      padding: 28px 32px;
+      border: 1px solid rgba(255,255,255,0.8);
+    }
+
+    .product-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #2b6e9e;
+      background: #e9f2f9;
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 40px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #1F3A5F, #2B6E9E);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .subhead {
+      font-size: 1rem;
+      color: #2c5a7a;
+      max-width: 80%;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .time-chip {
+      background: #ffffffcc;
+      backdrop-filter: blur(4px);
+      border: 1px solid #cbdde9;
+      padding: 6px 16px;
+      border-radius: 32px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #1f6392;
+    }
+
+    .card-modern {
+      background: #ffffff;
+      border-radius: 28px;
+      padding: 28px 30px;
+      margin-bottom: 28px;
+      box-shadow: 0 12px 28px -8px rgba(0, 32, 64, 0.08);
+      transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+      border: 1px solid rgba(166, 194, 220, 0.25);
+    }
+
+    .card-modern:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 32px -12px rgba(0, 32, 64, 0.14);
+      border-color: rgba(43, 110, 158, 0.2);
+    }
+
+    .tip-card {
+      background: linear-gradient(115deg, #F0F9FF 0%, #FFFFFF 100%);
+      border-left: 6px solid #2b9b5e;
+      border-radius: 24px;
+    }
+    .tip-card b { font-size: 1.1rem; display: flex; align-items: center; gap: 8px; color: #166534; }
+    .tip-card ul { margin-top: 12px; padding-left: 24px; display: flex; flex-wrap: wrap; gap: 20px; }
+    .tip-card li { font-size: 0.9rem; color: #1f5e3a; }
+
+    .errors-title {
+      font-weight: 800;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #b91c1c;
+    }
+    .errors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .error-card {
+      background: #fff8f5;
+      border-radius: 20px;
+      padding: 12px 16px;
+      font-weight: 500;
+      border: 1px solid #ffe2dd;
+      font-size: 0.85rem;
+      color: #a13020;
+      transition: all 0.25s ease;
+    }
+    .error-card:hover {
+      transform: translateX(6px) translateY(-2px);
+      background: #fff2ee;
+    }
+    .error-card::before { content: "⚠️ "; }
+
+    .progress-panel-wrapper {
+      position: sticky;
+      top: 20px;
+      z-index: 100;
+      margin-bottom: 28px;
+    }
+    .progress-panel {
+      background: #f8fafd;
+      border-radius: 24px;
+      padding: 6px 6px 6px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .status-text {
+      font-weight: 700;
+      font-size: 1.2rem;
+      background: #ffffff;
+      padding: 8px 18px;
+      border-radius: 40px;
+    }
+    .progress-bar-bg {
+      flex: 1;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 20px;
+      overflow: hidden;
+      min-width: 160px;
+      position: relative;
+    }
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #dc2626, #ef4444, #dc2626);
+      background-size: 200% 100%;
+      border-radius: 20px;
+      transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      animation: shimmer 1.5s infinite;
+      transform: translateX(-100%);
+    }
+
+    .errors-widget {
+      position: relative;
+      cursor: pointer;
+      background: #fff6e5;
+      border-radius: 40px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #b45309;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #ffe2cc;
+    }
+    .errors-widget:hover { background: #fff2de; }
+    .errors-widget-badge {
+      background: #f97316;
+      color: white;
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+    }
+    .errors-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 12px 28px -8px rgba(0,0,0,0.15);
+      min-width: 260px;
+      padding: 12px;
+      z-index: 101;
+      display: none;
+      border: 1px solid #ffe2cc;
+    }
+    .errors-widget.open .errors-dropdown { display: block; }
+    .errors-dropdown-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      color: #b45309;
+      border-bottom: 1px solid #ffe2cc;
+      padding-bottom: 6px;
+    }
+    .errors-dropdown-list {
+      list-style: none;
+      font-size: 0.75rem;
+      color: #92400e;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .errors-dropdown-list li { padding: 6px 0; border-bottom: 1px solid #fef3c7; }
+
+    .step-modern {
+      background: #ffffff;
+      margin-bottom: 16px;
+      border-radius: 24px;
+      border: 1px solid #eef2f8;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    .step-modern.current-step {
+      border-color: #dc2626;
+      box-shadow: 0 8px 28px -12px rgba(220, 38, 38, 0.25);
+      animation: slideInRight 0.4s ease-out;
+    }
+    .step-modern.completed-step {
+      opacity: 0.75;
+      border-color: #86efac;
+      background: #f8fef9;
+    }
+    .step-modern.optional-step {
+      border-left: 4px solid #22c55e;
+      background: #fefdf5;
+    }
+    .step-modern.optional-step .step-number {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .step-modern.hidden-step { display: none; }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 24px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      background: #ffffff;
+    }
+    .step-number {
+      background: #eef3fc;
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 60px;
+      font-weight: 800;
+      color: #1f5e8c;
+      font-size: 0.9rem;
+    }
+    .step-modern.current-step .step-number {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .step-modern.completed-step .step-number {
+      background: #bbf7d0;
+      color: #15803d;
+    }
+    .step-title-text {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .bonus-badge {
+      background: #22c55e;
+      color: white;
+      font-size: 0.65rem;
+      padding: 2px 10px;
+      border-radius: 20px;
+    }
+    .step-arrow {
+      font-size: 1.2rem;
+      transition: transform 0.25s ease;
+      color: #7d9dbb;
+    }
+    .step-modern.current-step .step-arrow {
+      transform: rotate(90deg);
+      color: #dc2626;
+    }
+    .step-panel-modern {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+      padding: 0 24px;
+    }
+    .step-modern.current-step .step-panel-modern {
+      max-height: 800px;
+      padding: 0 24px 20px 24px;
+    }
+    .checklist-modern {
+      list-style: none;
+      margin-top: 6px;
+    }
+    .checklist-modern li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f4fa;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+    .checklist-modern li:hover {
+      background: #fbfefd;
+      padding-left: 8px;
+      transform: translateX(2px);
+    }
+    .checklist-modern input[type="checkbox"] {
+      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      accent-color: #dc2626;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s ease;
+    }
+    .checklist-modern input[type="checkbox"]:checked {
+      animation: checkboxPop 0.2s ease;
+    }
+    .checklist-modern small {
+      display: block;
+      font-size: 0.7rem;
+      color: #6b7f8f;
+      margin-top: 4px;
+    }
+    .inline-note {
+      font-size: 0.75rem;
+      color: #6c86a3;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: #f8fafe;
+      border-radius: 16px;
+    }
+
+    .start-btn-container {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .start-btn {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: white;
+      border: none;
+      padding: 16px 48px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+      animation: bounceIn 0.6s ease-out;
+    }
+    .start-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(220, 38, 38, 0.4);
+    }
+
+    .nav-buttons-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      gap: 16px;
+    }
+    .prev-step-btn {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+      padding: 10px 28px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .prev-step-btn:hover {
+      background: #e2e8f0;
+      transform: translateY(-1px);
+    }
+    .next-step-btn {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .next-step-btn:hover {
+      background: #b91c1c;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(220, 38, 38, 0.3);
+    }
+
+    .final-card {
+      margin-top: 20px;
+      padding: 20px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 1.3rem;
+      border-radius: 28px;
+      transition: all 0.3s ease;
+    }
+    .final-ok {
+      background: #e6f7ec;
+      color: #15803d;
+      border: 1px solid #b2e3c0;
+    }
+    .final-bad {
+      background: #fff0ef;
+      color: #b91c1c;
+      border: 1px solid #ffcdca;
+    }
+
+    @media (max-width: 700px) {
+      body { padding: 20px 16px; }
+      h1 { font-size: 1.9rem; }
+      .subhead { max-width: 100%; }
+      .card-modern { padding: 20px; }
+      .step-header { padding: 12px 18px; }
+      .progress-panel { flex-wrap: wrap; }
+      .errors-dropdown { right: auto; left: 0; min-width: 240px; }
+      .start-btn { padding: 12px 32px; font-size: 1rem; }
+      .nav-buttons-container { flex-direction: column; gap: 12px; }
+      .prev-step-btn, .next-step-btn { width: 100%; justify-content: center; }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+</head>
+<body>
+<div class="app-wrapper">
+  <div class="hero">
+    <div class="product-badge">⚖️ СТАНДАРТ ПРЕДВАРИТЕЛЬНОЙ ОЦЕНКИ ДОГОВОРОВ</div>
+    <h1>Чек-лист самопроверки</h1>
+    <div class="subhead">Этот чек-лист защищает вас от возвратов договора и ускоряет согласование</div>
+    <div class="time-chip">⏱ Проверка занимает 3–5 минут</div>
+  </div>
+
+  <div class="card-modern tip-card">
+    <b>⚠️ Помни — лучшее решение с минимальными ошибками: использование типового договора</b>
+    <ul><li>✓ снижает риск возврата</li><li>✓ ускоряет согласование</li><li>✓ упрощает работу всем</li></ul>
+  </div>
+
+  <div class="card-modern">
+    <div class="errors-title">📊 Смотри, в чем основные ошибки</div>
+    <div class="errors-grid">
+      <div class="error-card">50% — Приложения</div>
+      <div class="error-card">10% — Нет НДС</div>
+      <div class="error-card">10% — Нет сроков</div>
+      <div class="error-card">10% — Нет предмета</div>
+      <div class="error-card">10% — Нет поручительства</div>
+      <div class="error-card">5% — Не тот формат договора</div>
+      <div class="error-card">5% — Ошибка в подписанте</div>
+    </div>
+  </div>
+
+  <div class="card-modern" style="padding-bottom: 20px;">
+    <div class="progress-panel-wrapper">
+      <div class="progress-panel">
+        <span class="status-text" id="status">0 из 14 блоков выполнено</span>
+        <div class="progress-bar-bg"><div class="progress-fill" id="bar"></div></div>
+        <div class="errors-widget" id="errorsWidget">
+          <span>⚠️</span>
+          <span id="errorsCount">0</span>
+          <span>блоков осталось</span>
+          <span class="errors-widget-badge">▼</span>
+          <div class="errors-dropdown">
+            <div class="errors-dropdown-title">📌 Что нужно исправить</div>
+            <ul class="errors-dropdown-list" id="errorsDropdownList"><li>Нажмите «Начать проходить»</li></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="start-btn-container" id="startBtnContainer">
+      <button class="start-btn" id="startBtn">🚀 Начать проходить чек-лист</button>
+    </div>
+
+    <div id="checklistContainer" style="display: none;">
+      <div id="list">
+        <div class="step-modern" data-step="1" data-completed="false" data-optional="false">
+          <div class="step-header"><span class="step-number">1</span><span class="step-title-text">Проверка преамбулы Договора</span><span class="step-arrow">▶</span></div>
+          <div class="step-panel-modern"><ul class="checklist-modern">
+            <li><input type="checkbox"> Юридическое лицо определено, написано правильно</li>
+            <li><input type="checkbox"> Наименование юр.лица указано во всем договоре одно и то же</li>
+            <li><input type="checkbox"> Корректно указан подписант (Ф.И.О.)</li>
+            <li><input type="checkbox"> Корректно указана должность подписанта</li>
+            <li><input type="checkbox"> Верно указано основания действия подписанта (доверенность / устав)</li>
+            <li><input type="checkbox"> Верно указаны номер и дата доверенности</li>
+          </ul></div>
+        </div>
+        <div class="step-modern" data-step="2" data-completed="false" data-optional="true">
+          <div class="step-header"><span class="step-number">2</span><span class="step-title-text">Есть ли Типовая форма Договора <span class="bonus-badge">✨ Бонусный шаг</span></span><span class="step-arrow">▶</span></div>
+          <div class="step-panel-modern"><ul class="checklist-modern">
+            <li><input type="checkbox" data-optional="true"> По возможности используется типовая форма <small>не учитывается в подсчете, но очень полезно!</small></li>
+          </ul></div>
+        </div>
+        <div class="step-modern" data-step="3" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">3</span><span class="step-title-text">Реквизиты</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Проверены реквизиты сторон</li></ul></div></div>
+        <div class="step-modern" data-step="4" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">4</span><span class="step-title-text">Предмет</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Определен предмет, отражает действительность</li><li><input type="checkbox"> Есть детализация предмета договора</li></ul></div></div>
+        <div class="step-modern" data-step="5" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">5</span><span class="step-title-text">Цена и оплата</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Указана верная стоимость</li><li><input type="checkbox"> Указан верный порядок оплаты</li><li><input type="checkbox"> Соответствует договоренностям</li><li><input type="checkbox"> Указана информация про НДС</li></ul></div></div>
+        <div class="step-modern" data-step="6" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">6</span><span class="step-title-text">Сроки</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Указаны верные сроки</li></ul></div></div>
+        <div class="step-modern" data-step="7" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">7</span><span class="step-title-text">Доставка</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Определены верные условия доставки</li></ul></div></div>
+        <div class="step-modern" data-step="8" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">8</span><span class="step-title-text">Ответственность</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Если указаны штрафы и пени, то соблюден баланс между сторонами</li></ul></div></div>
+        <div class="step-modern" data-step="9" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">9</span><span class="step-title-text">Гарантии</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Указаны гарантийные обязательства</li></ul></div></div>
+        <div class="step-modern" data-step="10" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">10</span><span class="step-title-text">Приемка</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Определен порядок приемки</li></ul></div></div>
+        <div class="step-modern" data-step="11" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">11</span><span class="step-title-text">Расторжение</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Указаны условия расторжения</li></ul></div></div>
+        <div class="step-modern" data-step="12" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">12</span><span class="step-title-text">Приложения</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Все приложения присутствуют</li><li><input type="checkbox"> Проверено содержание</li><li><input type="checkbox"> Проверена сумма</li><li><input type="checkbox"> Информация про НДС есть</li></ul></div></div>
+        <div class="step-modern" data-step="13" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">13</span><span class="step-title-text">Формат договора</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Выбран верный тип договора (для работ-подряд; для товаров-поставка; для услуг-услуги)</li></ul><div class="inline-note">⚠️ Помни, если у одного и того же Исполнителя покупаем материалы и он же выполняет с ними работы, то это 100% один общий договор подряда</div></div></div>
+        <div class="step-modern" data-step="14" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">14</span><span class="step-title-text">Аванс</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Проверен аванс</li><li><input type="checkbox"> Есть поручительство (если превышен допустимы лимит аванса)</li></ul></div></div>
+        <div class="step-modern" data-step="15" data-completed="false" data-optional="false"><div class="step-header"><span class="step-number">15</span><span class="step-title-text">Итог</span><span class="step-arrow">▶</span></div><div class="step-panel-modern"><ul class="checklist-modern"><li><input type="checkbox"> Договор проверен полностью</li><li><input type="checkbox"> Готов к согласованию</li></ul></div></div>
+      </div>
+      <div id="final" class="final-card final-bad">❌ Нельзя направлять</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const startBtn = document.getElementById('startBtn');
+    const startContainer = document.getElementById('startBtnContainer');
+    const checklistContainer = document.getElementById('checklistContainer');
+    const statusSpan = document.getElementById('status');
+    const bar = document.getElementById('bar');
+    const finalDiv = document.getElementById('final');
+    const errorsCountSpan = document.getElementById('errorsCount');
+    const errorsDropdownList = document.getElementById('errorsDropdownList');
+    const errorsWidget = document.getElementById('errorsWidget');
+    
+    let currentStepIndex = 0;
+    let wasCompleted = false;
+    let allSteps = [];
+    let requiredSteps = [];
+    
+    function isStepCompleted(stepElement) {
+      const isOptional = stepElement.getAttribute('data-optional') === 'true';
+      if (isOptional) return true;
+      const checkboxes = stepElement.querySelectorAll('.checklist-modern input[type="checkbox"]:not([data-optional])');
+      if (checkboxes.length === 0) return true;
+      return Array.from(checkboxes).every(cb => cb.checked);
+    }
+    
+    function updateStepCompletionStatus(stepElement) {
+      const isComplete = isStepCompleted(stepElement);
+      if (isComplete) {
+        stepElement.setAttribute('data-completed', 'true');
+        stepElement.classList.add('completed-step');
+      } else {
+        stepElement.setAttribute('data-completed', 'false');
+        stepElement.classList.remove('completed-step');
+      }
+      return isComplete;
+    }
+    
+    function updateVisibility() {
+      allSteps.forEach(step => {
+        step.classList.remove('current-step');
+        step.classList.add('hidden-step');
+      });
+      const currentStep = allSteps[currentStepIndex];
+      if (currentStep) {
+        currentStep.classList.remove('hidden-step');
+        currentStep.classList.add('current-step');
+        setTimeout(() => {
+          currentStep.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+    }
+    
+    function updateNavigationButtons() {
+      // Удаляем все старые кнопки из всех блоков
+      allSteps.forEach(step => {
+        const oldNav = step.querySelector('.nav-buttons-container');
+        if (oldNav) oldNav.remove();
+      });
+      
+      const currentStep = allSteps[currentStepIndex];
+      if (!currentStep) return;
+      
+      const panel = currentStep.querySelector('.step-panel-modern');
+      if (!panel) return;
+      
+      const isOptional = currentStep.getAttribute('data-optional') === 'true';
+      const isCompleted = isStepCompleted(currentStep);
+      
+      // Показываем кнопки только если блок опциональный ИЛИ заполнен
+      if (!isOptional && !isCompleted) return;
+      
+      const navContainer = document.createElement('div');
+      navContainer.className = 'nav-buttons-container';
+      
+      // Кнопка "Назад" (кроме первого блока)
+      if (currentStepIndex > 0) {
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'prev-step-btn';
+        prevBtn.innerHTML = '← Предыдущий шаг';
+        prevBtn.onclick = (e) => {
+          e.stopPropagation();
+          if (currentStepIndex > 0) {
+            currentStepIndex--;
+            updateVisibility();
+            updateProgress();
+            updateNavigationButtons();
+          }
+        };
+        navContainer.appendChild(prevBtn);
+      }
+      
+      // Кнопка "Далее"
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'next-step-btn';
+      nextBtn.innerHTML = currentStepIndex === allSteps.length - 1 ? '✅ Завершить ✓' : '→ Следующий шаг';
+      nextBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (currentStepIndex < allSteps.length - 1) {
+          currentStepIndex++;
+          updateVisibility();
+          updateProgress();
+          updateNavigationButtons();
+        } else if (currentStepIndex === allSteps.length - 1) {
+          updateProgress();
+        }
+      };
+      navContainer.appendChild(nextBtn);
+      
+      panel.appendChild(navContainer);
+    }
+    
+    function updateProgress() {
+      let doneBlocks = 0;
+      let totalBlocks = 0;
+      let issuesList = [];
+      
+      requiredSteps.forEach((step, idx) => {
+        totalBlocks++;
+        if (isStepCompleted(step)) {
+          doneBlocks++;
+        } else {
+          const titleElem = step.querySelector('.step-title-text');
+          let title = '';
+          if (titleElem) {
+            const textNode = titleElem.childNodes[0];
+            title = textNode ? textNode.nodeValue?.trim() : '';
+            if (!title) title = titleElem.innerText.split('✨')[0].trim();
+          }
+          if (!title) title = `Блок ${idx + 1}`;
+          issuesList.push(`❗ Не заполнен блок: "${title}"`);
+        }
+      });
+      
+      const percent = totalBlocks ? (doneBlocks / totalBlocks) * 100 : 0;
+      bar.style.width = `${percent}%`;
+      statusSpan.textContent = `${doneBlocks} из ${totalBlocks} блоков выполнено`;
+      document.title = `(${doneBlocks}/${totalBlocks}) Чек-лист договоров`;
+      
+      const remaining = totalBlocks - doneBlocks;
+      errorsCountSpan.textContent = remaining;
+      errorsDropdownList.innerHTML = issuesList.length ? issuesList.map(issue => `<li>${issue}</li>`).join('') : '<li>✅ Все блоки заполнены!</li>';
+      
+      const isCompleted = totalBlocks > 0 && doneBlocks === totalBlocks;
+      if (isCompleted) {
+        finalDiv.textContent = '✅ Можно направлять! Отличная работа!';
+        finalDiv.className = 'final-card final-ok';
+        if (!wasCompleted && typeof canvasConfetti === 'function') {
+          wasCompleted = true;
+          canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#dc2626', '#2b9b5e', '#fbbf24'] });
+          setTimeout(() => {
+            canvasConfetti({ particleCount: 50, spread: 100, origin: { y: 0.5, x: 0.3 } });
+            canvasConfetti({ particleCount: 50, spread: 100, origin: { y: 0.5, x: 0.7 } });
+          }, 150);
+        }
+      } else {
+        finalDiv.textContent = '❌ Нельзя направлять. Заполните все блоки!';
+        finalDiv.className = 'final-card final-bad';
+        wasCompleted = false;
+      }
+      
+      // Обновляем статус завершённости текущего блока и кнопки
+      if (allSteps[currentStepIndex]) {
+        updateStepCompletionStatus(allSteps[currentStepIndex]);
+        updateNavigationButtons();
+      }
+    }
+    
+    function handleCheckboxChange(stepElement) {
+      updateStepCompletionStatus(stepElement);
+      updateProgress();
+    }
+    
+    function startChecklist() {
+      startContainer.style.display = 'none';
+      checklistContainer.style.display = 'block';
+      
+      allSteps = Array.from(document.querySelectorAll('#list .step-modern'));
+      requiredSteps = allSteps.filter(step => step.getAttribute('data-optional') !== 'true');
+      
+      // Настройка всех блоков
+      allSteps.forEach((step, idx) => {
+        step.classList.add('hidden-step');
+        step.classList.remove('current-step', 'completed-step');
+        step.setAttribute('data-completed', 'false');
+        
+        if (step.getAttribute('data-optional') === 'true') {
+          step.classList.add('optional-step');
+        }
+        
+        // Обработчики для чекбоксов
+        const checkboxes = step.querySelectorAll('.checklist-modern input[type="checkbox"]');
+        checkboxes.forEach(cb => {
+          cb.removeEventListener('change', () => {});
+          cb.addEventListener('change', () => handleCheckboxChange(step));
+        });
+        
+        // Обработчики для строк
+        const listItems = step.querySelectorAll('.checklist-modern li');
+        listItems.forEach(li => {
+          li.removeEventListener('click', () => {});
+          li.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'INPUT') {
+              const cb = li.querySelector('input[type="checkbox"]');
+              if (cb) {
+                cb.checked = !cb.checked;
+                cb.dispatchEvent(new Event('change', { bubbles: true }));
+              }
+            }
+          });
+        });
+      });
+      
+      currentStepIndex = 0;
+      updateVisibility();
+      updateProgress();
+      
+      setTimeout(() => {
+        if (allSteps[0]) {
+          allSteps[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 150);
+    }
+    
+    startBtn.addEventListener('click', startChecklist);
+    
+    errorsWidget.addEventListener('click', (e) => {
+      e.stopPropagation();
+      errorsWidget.classList.toggle('open');
+    });
+    
+    document.addEventListener('click', () => {
+      errorsWidget.classList.remove('open');
+    });
+  })();
+</script>
+</body>
+</html>
